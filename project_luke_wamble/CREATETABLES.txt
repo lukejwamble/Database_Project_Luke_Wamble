@@ -1,0 +1,88 @@
+CREATE TABLE `Prayers` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `prompt` VARCHAR(255) NOT NULL,
+    `body` TEXT NOT NULL,
+    `likesCount` INT NOT NULL DEFAULT 0,
+    `savesCount` INT NOT NULL DEFAULT 0,
+    `coverImageFilename` VARCHAR(255) NOT NULL,
+    `audioFilename` VARCHAR(255) NOT NULL,
+    `createdAt` DATETIME NOT NULL,
+    `updatedAt` DATETIME NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `Users` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `firstName` VARCHAR(255) NOT NULL,
+    `lastName` VARCHAR(255) NOT NULL,
+    `createdAt` DATETIME NOT NULL,
+    `updatedAt` DATETIME NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `Scriptures` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `prayerId` INT NOT NULL,
+    `reference` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`prayerId`) REFERENCES `Prayers` (`id`)
+);
+
+CREATE TABLE `Likes` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `userId` INT NOT NULL,
+    `prayerId` INT NOT NULL,
+    `timestamp` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`userId`) REFERENCES `Users` (`id`),
+    FOREIGN KEY (`prayerId`) REFERENCES `Prayers` (`id`)
+);
+
+CREATE TABLE `Saves` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `userId` INT NOT NULL,
+    `prayerId` INT NOT NULL,
+    `timestamp` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`userId`) REFERENCES `Users` (`id`),
+    FOREIGN KEY (`prayerId`) REFERENCES `Prayers` (`id`)
+);
+
+CREATE TABLE `Tags` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `PrayerTags` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `prayerId` INT NOT NULL,
+    `tagId` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`prayerId`) REFERENCES `Prayers` (`id`),
+    FOREIGN KEY (`tagId`) REFERENCES `Tags` (`id`)
+);
+
+CREATE TABLE `HumanCreators` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `firstName` VARCHAR(255) NOT NULL,
+    `lastName` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `AICreators` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `PrayerCreators` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `humanCreatorId` INT NULL,
+    `aiCreatorId` INT NULL,
+    `prayerId` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`humanCreatorId`) REFERENCES `HumanCreators` (`id`),
+    FOREIGN KEY (`aiCreatorId`) REFERENCES `AICreators` (`id`),
+    FOREIGN KEY (`prayerId`) REFERENCES `Prayers` (`id`)
+);
